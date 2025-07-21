@@ -209,8 +209,6 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
-vim.keymap.set('n', '<F2>', ':NERDTreeToggle<CR>', { desc = 'Toggle NERDTree' })
-
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -375,7 +373,12 @@ require('lazy').setup({
       },
     },
   },
-  { 'preservim/nerdtree' },
+  {
+    'preservim/nerdtree',
+    keys = {
+      { '<F2>', ':NERDTreeToggle<CR>', desc = 'Toggle NERDTree' },
+    },
+  },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -892,7 +895,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'buffer', 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },

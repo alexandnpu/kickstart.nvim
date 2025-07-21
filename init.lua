@@ -234,6 +234,13 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
+vim.api.nvim_create_autocmd('WinEnter', {
+  callback = function()
+    vim.api.nvim_set_hl(0, 'Normal', { bg = '#1e1e2e' }) -- Active window
+    vim.api.nvim_set_hl(0, 'NormalNC', { bg = '#111111' }) -- Inactive
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

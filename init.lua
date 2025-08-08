@@ -234,6 +234,12 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
+-- Set separator color for active/inactive windows
+vim.api.nvim_set_hl(0, 'WinSeparator', { fg = '#ff8800', bold = true })
+
+-- Optionally disable separator between vertical splits in active window
+vim.opt.fillchars:append { vert = '|' } -- or use ' ', '┃', etc.
+
 vim.api.nvim_create_autocmd('WinEnter', {
   callback = function()
     vim.api.nvim_set_hl(0, 'Normal', { bg = '#1e1e2e' }) -- Active window
@@ -277,7 +283,7 @@ vim.api.nvim_create_autocmd('ColorScheme', {
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  -- 'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -382,8 +388,10 @@ require('lazy').setup({
   },
   {
     'preservim/nerdtree',
+    event = 'VimEnter',
     keys = {
       { '<F2>', ':NERDTreeToggle<CR>', desc = 'Toggle NERDTree' },
+      { '<F3>', ':NERDTreeFind<CR>', desc = 'Find the file in NERDTree' },
     },
   },
 

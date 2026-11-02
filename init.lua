@@ -92,6 +92,22 @@ vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
+vim.g.neovide_cursor_animation_length = 0
+
+if vim.g.neovide then
+  vim.keymap.set('n', '<D-s>', ':w<CR>') -- Save
+  vim.keymap.set('v', '<D-c>', '"+y') -- Copy
+  vim.keymap.set('n', '<D-v>', '"+P') -- Paste normal mode
+  vim.keymap.set('v', '<D-v>', '"+P') -- Paste visual mode
+  vim.keymap.set('c', '<D-v>', '<C-R>+') -- Paste command mode
+  vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
+end
+
+-- Allow clipboard copy paste in neovim
+vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -105,7 +121,8 @@ vim.o.number = true
 -- vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
-vim.o.mouse = 'a'
+-- vim.o.mouse = 'a'
+vim.o.mouse = ''
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -114,9 +131,9 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.o.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -319,6 +336,18 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {--[[ things you want to change go here]]
+      open_mapping = [[<F4>]],
+      direction = 'float',
+      shade_terminals = true,
+      float_opts = {
+        border = 'curved',
+      },
+    },
+  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -486,8 +515,12 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sw', function()
+              builtin.grep_string { additional_args = { '--glob=!*Unittest.cpp' } }
+          end, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sg', function()
+              builtin.live_grep { additional_args = { '--glob=!*Unittest.cpp' } }
+          end, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -501,6 +534,12 @@ require('lazy').setup({
           previewer = false,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
+      vim.keymap.set('n', '<leader>ft', function()
+        require('telescope.builtin').tags()
+      end, { desc = 'Find tags' })
+      vim.keymap.set('n', '<leader>sT', function()
+        require('telescope.builtin').tags { default_text = vim.fn.expand '<cword>' }
+      end, { desc = 'Search [T]ags for word under cursor' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
